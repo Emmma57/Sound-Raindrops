@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Sound Reactive Circles</title>
+    <style>
+        /* Load the custom font */
+        @font-face {
+            font-family: 'BaseNeueLight';
+            src: url(BaseNeueTrial-WideLight.woff) format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'BaseNeueBlack';
+            src: url(BaseNeueTrial-WideBold.woff) format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background: radial-gradient(circle, #251DA6, #0c0037); /* Default background */
+        }
+        .circle-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .circle, .small-circle, .animated-button {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid #AFA2F8;
+            opacity: 0.9;
+            animation: grow 6s ease-out forwards;
+        }
+        .animated-button {
+            position: absolute;
+            border-radius: 70%;
+            border: 5px solid #AFA2F8;
+            box-shadow: 0 0 20px rgba(175, 162, 248, 0.8); /* Glow for buttons */
+            animation: buttonGlow 3s ease-out forwards;
+        }
+        @keyframes grow {
+            0% { transform: scale(0.1); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        /* Title text styling with custom font */
+        .title {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #AFA2F8; /* Default title color */
+            font-size: 20px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+            opacity: 80%;
+        }
+
+
+        .text1 {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #AFA2F8; /* Default title color */
+            font-size: 15px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: lighter ;
+            opacity: 80%;
+            align-items: center;
+        }
+
+        .text1 {
+        font-family: 'BaseNeueLight', Arial, Helvetica, sans-serif;
+        }
+
+        .text5, .title {
+        font-family: 'BaseNeueBlack', Arial, Helvetica, sans-serif;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="circle-container"></div>
+
+    <!-- Title text centered at the top with dynamic color -->
+    <div class="title" id="title">SOUND RAINDROPS</div>
+
+    <div class="text1" id="text1">Experiment with sounds and noises to create a unique audiovisual projection.</div>
+
+    <script>
+        let lastCreationTime = 0;
+        let primaryColor = '#AFA2F8'; // Default circle color
+        let secondaryColor = '#c2a2f8'; // Default small circle color
+
+        const buttonColors = [
+            { color: '#FBB1BB', background: 'radial-gradient(circle, #B40C3C, #610A23)', titleColor: '#FFDADF' },
+            { color: '#A477F2', background: 'radial-gradient(circle, #251DA6, #0c0037)', titleColor: '#AFA2F8' },
+            { color: '#FBCE6D', background: 'radial-gradient(circle, #D26702, #533100)', titleColor: '#FFEAC7' },
+            { color: '#66E097', background: 'radial-gradient(circle, #296B5F, #0C2C27)', titleColor: '#C5F9E9' }
+        ];
+
+        const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+        function createButton(color, background, xPos, yPos, titleColor, text1Color, text2Color, text3Color, text4Color, text5Color) {
+            const button = document.createElement('div');
+            button.classList.add('animated-button');
+            button.style.width = '120px'; // Increased size
+            button.style.height = '120px'; // Increased size
+            button.style.borderColor = color;
+            button.style.animation = 'grow 6s ease-out forwards';
+
+            // Set button position based on corner
+            if (xPos === 'left') {
+                button.style.left = '10px';
+            } else {
+                button.style.right = '10px';
+            }
+            if (yPos === 'top') {
+                button.style.top = '10px';
+            } else {
+                button.style.bottom = '10px';
+            }
+
+            button.onclick = () => changeColors(color, color, background, titleColor, text1Color, text2Color, text3Color, text4Color, text5Color);
+            document.body.appendChild(button);
+
+            // Add smaller circles inside the button
+            setTimeout(() => createSmallCirclesInsideButton(button, color), 500);
+
+            // Remove the button after animation and recreate it
+            setTimeout(() => {
+                button.remove();
+                createButton(color, background, xPos, yPos, titleColor, text1Color, text2Color, text3Color, text4Color, text5Color);
+            }, 6000);
+        }
+
+        function createSmallCirclesInsideButton(parent, color) {
+            for (let i = 1; i <= 3; i++) {
+                setTimeout(() => {
+                    const smallCircle = document.createElement('div');
+                    smallCircle.classList.add('small-circle');
+                    const size = getRandomInt(20, 30);
+                    smallCircle.style.width = `${size}px`;
+                    smallCircle.style.height = `${size}px`;
+                    smallCircle.style.top = `${(120 - size) / 2}px`;
+                    smallCircle.style.left = `${(120 - size) / 2}px`;
+                    smallCircle.style.borderColor = color;
+                    parent.appendChild(smallCircle);
+
+                    setTimeout(() => smallCircle.remove(), 3000);
+                }, i * 500);
+            }
+        }
+
+        function initializeButtons() {
+            createButton(buttonColors[0].color, buttonColors[0].background, 'left', 'top', buttonColors[0].titleColor);
+            createButton(buttonColors[1].color, buttonColors[1].background, 'right', 'top', buttonColors[1].titleColor);
+            createButton(buttonColors[2].color, buttonColors[2].background, 'left', 'bottom', buttonColors[2].titleColor);
+            createButton(buttonColors[3].color, buttonColors[3].background, 'right', 'bottom', buttonColors[3].titleColor);
+        }
+
+        function createCircleAtPosition(volumeFactor) {
+            const container = document.querySelector('.circle-container');
+            const size = getRandomInt(50, 100) * volumeFactor;
+            const circle = document.createElement('div');
+            circle.className = 'circle';
+            circle.style.width = `${size}px`;
+            circle.style.height = `${size}px`;
+            circle.style.top = `${getRandomInt(0, window.innerHeight - size)}px`;
+            circle.style.left = `${getRandomInt(0, window.innerWidth - size)}px`;
+            circle.style.borderColor = primaryColor;
+            container.appendChild(circle);
+
+            setTimeout(() => {
+                createSmallCircle(circle, size, 1, volumeFactor);
+                setTimeout(() => createSmallCircle(circle, size, 2, volumeFactor), 1500);
+                setTimeout(() => createSmallCircle(circle, size, 3, volumeFactor), 3000);
+            });
+            setTimeout(() => circle.remove(), 6000);
+        }
+
+        function changeColors(newPrimary, newSecondary, newBackground, newTitleColor) {
+    primaryColor = newPrimary;
+    secondaryColor = newSecondary;
+    document.body.style.background = newBackground;
+
+    // Change the color of all titles and texts
+    const elementsToChange = ['title', 'text1'];
+    elementsToChange.forEach(id => {
+        document.getElementById(id).style.color = newTitleColor;
+    });
+}
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const analyser = audioContext.createAnalyser();
+            analyser.fftSize = 256;
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            const source = audioContext.createMediaStreamSource(stream);
+            source.connect(analyser);
+
+            function updateVolume() {
+                analyser.getByteFrequencyData(dataArray);
+
+                const volume = dataArray.reduce((a, b) => a + b) / dataArray.length; // Direct volume average
+                const now = Date.now();
+                if (volume > 10 && now - lastCreationTime > 170) { // Threshold set to 30 for more reactivity
+                    createCircleAtPosition(volume / 60); // Scales circle size with volume
+                    lastCreationTime = now;
+                }
+
+                requestAnimationFrame(updateVolume);
+            }
+
+            updateVolume();
+        }).catch(console.error);
+
+        // Initialize buttons on page load
+        initializeButtons();
+    </script>
+</body>
+</html>
